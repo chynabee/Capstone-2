@@ -67,7 +67,8 @@ public class JdbcUserDao implements UserDao {
             return false;
         }
 
-        // TODO: Create the account record with initial balance
+       String sql2 = "INSERT INTO account (user_id, balance) VALUES (?, ?)";
+        jdbcTemplate.update(sql2, newUserId, 1000);
 
         return true;
     }

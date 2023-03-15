@@ -9,11 +9,16 @@ import java.util.List;
 
 public interface AccountDao {
 
-        Account getAcctByUserId(int userid);
+        Account getAcctByUserId (int userId);
 
-        BigDecimal getBalanceByAcctId( int accountId);
+        BigDecimal getBalanceByAcctId (int accountId);
 
-        BigDecimal getBalanceByUserId( int userId);
+        BigDecimal getBalanceByUserId (int userId);
+
+        BigDecimal addToAcctBalance (BigDecimal amountAdded, int id);
+
+        BigDecimal subtractFromAcctBalance (BigDecimal amountSubtracted, int id);
+
 
 
 

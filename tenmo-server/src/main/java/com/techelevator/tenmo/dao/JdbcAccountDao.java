@@ -2,28 +2,104 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class JdbcAccountDao implements AccountDao {
 
-    private JdbcTemplate jdbcTemplate;public JdbcAccountDao(JdbcTemplate jdbcTemplate) {
+    private final JdbcTemplate jdbcTemplate;
+
+    public JdbcAccountDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
 
-    @Override
-    public Account getAcctByUserId(int userid) {
-        return null;
+
+    public Account getAcctByUserId(int userId) {
+
+        Account account = null;
+
+        String sql = "select account_id, user_id, balance\n" +
+                "from account\n" +
+                "where user_id = ?;";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+
+        if(results.next()) {
+            account = mapRowToBalance(results);
+        }
+
+        return account;
     }
 
-    @Override
+
     public BigDecimal getBalanceByAcctId(int accountId) {
-        return null;
+
+        String sql = "select balance\n" +
+                "from account\n" +
+                "where account_id = ?;";
+
+        SqlRowSet results = null;
+        BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
+
+        return balance;
     }
 
-    @Override
+
     public BigDecimal getBalanceByUserId(int userId) {
-        return null;
+
+
+        String sql = "select balance\n" +
+                "from account\n" +
+                "where user_id = ?;";
+
+        SqlRowSet results = null;
+        BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, userId);
+
+
+        return balance;
+    }
+
+    public BigDecimal addToAcctBalance (BigDecimal amountAdded, int id){
+
+        String sql = "UPDATE account\n" +
+                "SET balance = balance + ?\n" +
+                "WHERE account_id = ? RETURNING balance;";
+
+        BigDecimal updatedBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class,amountAdded, id);
+
+
+        return updatedBalance;
+    }
+
+    public BigDecimal subtractFromAcctBalance (BigDecimal amountSubtracted, int id) {
+
+        String sql = "UPDATE account\n" +
+                "SET balance = balance - ?\n" +
+                "WHERE account_id = ? RETURNING balance;";
+
+        BigDecimal updatedBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class,amountSubtracted, id);
+
+
+        return updatedBalance;
+    }
+
+    private Account mapRowToBalance (SqlRowSet results) {
+
+        Account userAccount = new Account();
+
+        int accountId = results.getInt("account_id");
+        userAccount.setAccountId(accountId);
+
+        int userId = results.getInt("user_id");
+        userAccount.setUserId(userId);
+
+        BigDecimal balance = results.getBigDecimal("balance");
+        userAccount.setBalance(balance);
+
+        return userAccount;
     }
 }
