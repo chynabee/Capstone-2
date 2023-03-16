@@ -22,6 +22,8 @@ public interface TransferDao {
 
     Transfer transferAccountTo( int accountTo);
 
+    Transfer createTransfer (Transfer transfer);
+
 
 
 
