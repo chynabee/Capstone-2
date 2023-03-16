@@ -22,8 +22,13 @@ public interface TransferDao {
 
     Transfer transferAccountTo( int accountTo);
 
-    Transfer createTransfer (Transfer transfer);
+    Transfer createTransfer (int accountTo, int accountFrom, BigDecimal amount, BigDecimal balance);
 
+    Transfer getTransferByAccountId (int accountId);
+
+
+
+    Transfer insertTransfer(Transfer transfer);
 
 
 

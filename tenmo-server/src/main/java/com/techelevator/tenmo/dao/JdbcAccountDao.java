@@ -29,7 +29,7 @@ public class JdbcAccountDao implements AccountDao {
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
 
         if(results.next()) {
-            account = mapRowToBalance(results);
+            account = mapRowToAccountBalance(results);
         }
 
         return account;
@@ -63,31 +63,31 @@ public class JdbcAccountDao implements AccountDao {
         return balance;
     }
 
-    public BigDecimal addToAcctBalance (BigDecimal amountAdded, int id){
+    public BigDecimal addToAcctBalance (BigDecimal amountAdded, int accountId){
 
         String sql = "UPDATE account\n" +
                 "SET balance = balance + ?\n" +
                 "WHERE account_id = ? RETURNING balance;";
 
-        BigDecimal updatedBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class,amountAdded, id);
+        BigDecimal updatedBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class,amountAdded, accountId);
 
 
         return updatedBalance;
     }
 
-    public BigDecimal subtractFromAcctBalance (BigDecimal amountSubtracted, int id) {
+    public BigDecimal subtractFromAcctBalance (BigDecimal amountSubtracted, int accountId) {
 
         String sql = "UPDATE account\n" +
                 "SET balance = balance - ?\n" +
                 "WHERE account_id = ? RETURNING balance;";
 
-        BigDecimal updatedBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class,amountSubtracted, id);
+        BigDecimal updatedBalance = jdbcTemplate.queryForObject(sql, BigDecimal.class,amountSubtracted, accountId);
 
 
         return updatedBalance;
     }
 
-    private Account mapRowToBalance (SqlRowSet results) {
+    private Account mapRowToAccountBalance (SqlRowSet results) {
 
         Account userAccount = new Account();
 

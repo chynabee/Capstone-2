@@ -63,16 +63,16 @@ public class TransferController {
 
     @RequestMapping(path = "/transfer", method = RequestMethod.POST)
     public ResponseEntity<String> sendTransfer(@Valid @RequestBody Transfer transfer) {
+        //transfer.setTransferStatusId(APPROVED);
         Transfer updatedTransfer = null;
-
-        if(transfer.getAccountTo()==transfer.getAccountFrom()){return new ResponseEntity<String>
-                ("Please try again. Unable to complete transfer into the same account!", HttpStatus.BAD_REQUEST);}
-
+        if(transfer.getAccountTo()==transfer.getAccountFrom()){return new ResponseEntity<String>("You can not transfer money to yourself", HttpStatus.BAD_REQUEST);}
+        //transfer.setTransferTypeId(SEND);
         BigDecimal accountFrom = accountDao.getBalanceByAcctId(transfer.getAccountFrom());
+        //Account accountTo = accountDao.getAccountByUserId(transfer.getAccountTo());
         int compare = accountFrom.compareTo(transfer.getAmount());
 
         if (compare >= 0) {
-            updatedTransfer = transferDao.createTransfer(transfer);
+            updatedTransfer = transferDao.insertTransfer(transfer);
         }
         if (updatedTransfer != null) {
             accountDao.addToAcctBalance(transfer.getAmount(), transfer.getAccountTo());
@@ -84,7 +84,8 @@ public class TransferController {
         return new ResponseEntity<String>("Transfer complete", HttpStatus.CREATED);
     }
 
-
-
-
 }
+
+
+
+

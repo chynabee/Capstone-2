@@ -13,6 +13,10 @@ import java.util.List;
 @Component
 public class JdbcTransferDao implements TransferDao {
 
+    private String approvedStatus = "Approved";
+    private String transferRequest = "Request";
+
+
     private final JdbcTemplate jdbcTemplate;
 
     private final JdbcAccountDao jdbcAccountDao;
@@ -23,16 +27,31 @@ public class JdbcTransferDao implements TransferDao {
     }
 
 
-    @Override
-    public Transfer createTransfer(Transfer transfer) {
+   @Override
+    public Transfer createTransfer(int accountTo, int accountFrom, BigDecimal amount, BigDecimal balance) {
         String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, transfer.getTransferTypeId(), transfer.getTransferStatusId(),
-                transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        jdbcTemplate.update(sql, accountTo, accountFrom, amount, 2, 1);
 
-        return transfer;
+        return null;
+
     }
 
+    @Override
+    public Transfer getTransferByAccountId(int accountId) {
+        return null;
+    }
+
+    @Override
+    public Transfer insertTransfer(Transfer transfer) {
+        Transfer transfer1 = null;
+        String sql = "INSERT INTO transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                "VALUES(2,2, ?, ?, ?) RETURNING transfer_id";
+
+        int transferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        //transfer1 = mapResultToTransfer(results);
+        return getTransferByTransferId(transferId);
+    }
 
     @Override
     public List<Transfer> getTransferByUserId(int userId) {
@@ -41,9 +60,9 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public Transfer getTransferByTransferId(int transferId) {
-        Transfer transfer = new Transfer();
+        Transfer transfer = null;
 
-        String sql = " SELECT transfer_id, transfer_type_id, transfer_status_id, amount, account_from, account_to\n" +
+        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, amount, account_from, account_to\n" +
                 "FROM transfer\n" +
                 "WHERE transfer_id = ?;";
 
@@ -137,9 +156,8 @@ public class JdbcTransferDao implements TransferDao {
             transferToTrack.setTransferStatusId(2);
             transferToTrack.setTransferTypeId(1);
 
-            createTransfer(transferToTrack);
-
             return "Your transfer is complete!";
+
         } else {
 
             return "Transfer cannot be completed!";

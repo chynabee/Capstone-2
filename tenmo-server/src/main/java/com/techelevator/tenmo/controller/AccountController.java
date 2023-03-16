@@ -1,7 +1,10 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.JdbcAccountDao;
 import com.techelevator.tenmo.model.Account;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,20 +29,27 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 
 @RestController
+@PreAuthorize("isAuthenticated")
+@RequestMapping(path = "/accounts")
 public class AccountController {
 
-    private AccountDao accountDao;
+    @Autowired
+    private JdbcAccountDao accountDao;
 
-    public AccountController(AccountDao accountDao) {
+    @Autowired
+    private UserDao userDao;
+
+    public AccountController(JdbcAccountDao accountDao, UserDao userDao) {
         this.accountDao = accountDao;
+        this.userDao = userDao;
     }
 
-    @RequestMapping(path = "/balance/account/{accountId}", method = RequestMethod.GET)
+    @RequestMapping(path = "{accountId}/balance", method = RequestMethod.GET)
     public BigDecimal getBalanceByAcctId (@PathVariable int accountId) {
         return accountDao.getBalanceByAcctId(accountId);
     }
 
-    @RequestMapping(path = "/balance/user/{userId}", method = RequestMethod.GET)
+    @RequestMapping(path = "{userId}/balance", method = RequestMethod.GET)
     public BigDecimal getBalanceByUserId (@PathVariable int userId) {
         return accountDao.getBalanceByUserId(userId);
     }
