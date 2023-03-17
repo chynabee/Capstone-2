@@ -2,6 +2,7 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,7 +27,7 @@ public interface TransferDao {
 
     Transfer getTransferByAccountId (int accountId);
 
-
+    List<Transfer> getTransferListByAccountId(int accountId);
 
     Transfer insertTransfer(Transfer transfer);
 

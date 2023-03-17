@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
+import com.techelevator.tenmo.dao.JdbcTransferDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Transfer;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
-@PreAuthorize("isAuthenticated")
+@PreAuthorize("isAuthenticated()")
 @RestController
 public class TransferController {
     /// setup transfer parameters for clients#5
@@ -56,6 +58,13 @@ public class TransferController {
 
     }
 
+    @RequestMapping(path = "/mytransfers/{accountId}", method = RequestMethod.GET)
+    public List<Transfer> getTransferListByAccountId(@PathVariable int accountId) {
+        List<Transfer> nullList = new ArrayList<>();
+        nullList = transferDao.getTransferListByAccountId(accountId);
+        return nullList;
+    }
+
     @RequestMapping(path = "/transferstatus", method = RequestMethod.POST)
     public Transfer getTransferByStatus(int statusId) {
         return transferDao.getTransferByStatus(statusId);
@@ -63,12 +72,12 @@ public class TransferController {
 
     @RequestMapping(path = "/transfer", method = RequestMethod.POST)
     public ResponseEntity<String> sendTransfer(@Valid @RequestBody Transfer transfer) {
-        //transfer.setTransferStatusId(APPROVED);
+
         Transfer updatedTransfer = null;
         if(transfer.getAccountTo()==transfer.getAccountFrom()){return new ResponseEntity<String>("You can not transfer money to yourself", HttpStatus.BAD_REQUEST);}
-        //transfer.setTransferTypeId(SEND);
+
         BigDecimal accountFrom = accountDao.getBalanceByAcctId(transfer.getAccountFrom());
-        //Account accountTo = accountDao.getAccountByUserId(transfer.getAccountTo());
+
         int compare = accountFrom.compareTo(transfer.getAmount());
 
         if (compare >= 0) {

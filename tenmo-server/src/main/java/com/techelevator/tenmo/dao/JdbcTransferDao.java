@@ -128,6 +128,20 @@ public class JdbcTransferDao implements TransferDao {
         return transfer;
     }
 
+    public List<Transfer> getTransferListByAccountId(int accountId){
+
+        List<Transfer> transferList = new ArrayList<>();
+        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, amount, account_from, account_to\n" +
+                "FROM transfer \n" +
+                "WHERE account_from = ? OR account_to = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
+        while(results.next()){
+            Transfer transfer = mapRowToTransfer(results);
+            transferList.add(transfer);
+        }
+        return transferList;
+    }
+
     @Override
     public Transfer transferAccountTo(int accountTo) {
         Transfer transfer = new Transfer();
