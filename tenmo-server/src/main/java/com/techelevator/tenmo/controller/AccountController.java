@@ -44,12 +44,12 @@ public class AccountController {
         this.userDao = userDao;
     }
 
-    @RequestMapping(path = "{accountId}/balance", method = RequestMethod.GET)
+    @RequestMapping(path = "/{accountId}/balance", method = RequestMethod.GET)
     public BigDecimal getBalanceByAcctId (@PathVariable int accountId) {
         return accountDao.getBalanceByAcctId(accountId);
     }
 
-    @RequestMapping(path = "{userId}/balance", method = RequestMethod.GET)
+    @RequestMapping(path = "/user/{userId}/balance", method = RequestMethod.GET)
     public BigDecimal getBalanceByUserId (@PathVariable int userId) {
         return accountDao.getBalanceByUserId(userId);
     }

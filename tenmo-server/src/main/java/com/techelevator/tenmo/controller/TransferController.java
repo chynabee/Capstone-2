@@ -25,6 +25,8 @@ public class TransferController {
     private final UserDao userDao;
     private final AccountDao accountDao;
     private final TransferDao transferDao;
+    private static final int APPROVED = 1;
+    private static final int SEND = 2;
 
     public TransferController(UserDao userDao, AccountDao accountDao, TransferDao transferDao) {
         this.userDao = userDao;
@@ -35,7 +37,7 @@ public class TransferController {
     //get Transfer
     //request transfer
     //
-    @RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/transfer/{transferId}", method = RequestMethod.GET)
     public Transfer getTransferByTransferId(@PathVariable int transferId) {
 
         Transfer transfer = null;
@@ -46,8 +48,8 @@ public class TransferController {
 
     }
 
-    @RequestMapping(path = "/gettransfertype", method = RequestMethod.GET)
-    public Transfer getTransferByTypeId(int typeId) {
+    @RequestMapping(path = "/gettransfer/{typeId}", method = RequestMethod.GET)
+    public Transfer getTransferByTypeId(@PathVariable int typeId) {
 
         return transferDao.getTransferByTypeId(typeId);
     }
@@ -65,8 +67,8 @@ public class TransferController {
         return nullList;
     }
 
-    @RequestMapping(path = "/transferstatus", method = RequestMethod.POST)
-    public Transfer getTransferByStatus(int statusId) {
+    @RequestMapping(path = "/transferstatus/{statusId}", method = RequestMethod.POST)
+    public Transfer getTransferByStatus(@PathVariable int statusId) {
         return transferDao.getTransferByStatus(statusId);
     }
 

@@ -11,7 +11,7 @@ public class Transfer {
     private int accountFrom;
     private int accountTo;
 
-    public int getTransferId() {
+    public int getTransferByTransferId() {
         return transferId;
     }
 
